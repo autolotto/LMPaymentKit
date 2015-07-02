@@ -21,26 +21,60 @@
     return [[self alloc] initWithString:string];
 }
 
-- (instancetype)initWithString:(NSString *)string
++ (PKCardType)cardTypeFromString:(NSString *)typeString
 {
-    self = [super init];
-    if (self) {
-        // Strip non-digits
-        number = [string stringByReplacingOccurrencesOfString:@"\\D"
-                                                    withString:@""
-                                                       options:NSRegularExpressionSearch
-                                                         range:NSMakeRange(0, string.length)];
-    }
-    return self;
+    if ([typeString isEqualToString:@"American Express"])
+        return PKCardTypeAmex;
+    else if ([typeString isEqualToString:@"Diners Club"])
+        return PKCardTypeDinersClub;
+    else if ([typeString isEqualToString:@"Discover"])
+        return PKCardTypeDiscover;
+    else if ([typeString isEqualToString:@"JCB"])
+        return PKCardTypeJCB;
+    else if ([typeString isEqualToString:@"MasterCard"])
+        return PKCardTypeMasterCard;
+    else if ([typeString isEqualToString:@"Visa"])
+        return PKCardTypeVisa;
+    else
+        return PKCardTypeUnknown;
 }
 
-- (PKCardType)cardType
-{    
-    if (number.length < 2) return PKCardTypeUnknown;
++ (UIImage *)cardLogoForType:(PKCardType)cardType
+{
+    NSString *cardTypeName   = @"card_placeholder";
+    switch (cardType) {
+        case PKCardTypeAmex:
+            cardTypeName = @"amex";
+            break;
+        case PKCardTypeDinersClub:
+            cardTypeName = @"diners";
+            break;
+        case PKCardTypeDiscover:
+            cardTypeName = @"discover";
+            break;
+        case PKCardTypeJCB:
+            cardTypeName = @"jcb";
+            break;
+        case PKCardTypeMasterCard:
+            cardTypeName = @"mastercard";
+            break;
+        case PKCardTypeVisa:
+            cardTypeName = @"visa";
+            break;
+        default:
+            break;
+    }
     
-    NSString* firstChars = [number substringWithRange:NSMakeRange(0, 2)];
+    return [UIImage imageNamed:cardTypeName];
+}
+
++ (PKCardType)cardTypeFromCardNumber:(NSString *)cardNumber
+{
+    if (cardNumber.length < 2) return PKCardTypeUnknown;
     
-    int range = [firstChars integerValue];
+    NSString* firstChars = [cardNumber substringWithRange:NSMakeRange(0, 2)];
+    
+    NSInteger range = [firstChars integerValue];
     
     if (range >= 40 && range <= 49) {
         return PKCardTypeVisa;
@@ -57,6 +91,51 @@
     } else {
         return PKCardTypeUnknown;
     }
+}
+
++ (NSString *)cardTypeStringFromCardNumber:(NSString *)cardNumber
+{
+    PKCardType cardType = [PKCardNumber cardTypeFromCardNumber:cardNumber];
+    
+    switch (cardType) {
+        case PKCardTypeAmex:
+            return @"American Express";
+        case PKCardTypeDinersClub:
+            return @"Diners Club";
+        case PKCardTypeDiscover:
+            return @"Discover";
+        case PKCardTypeJCB:
+            return @"JCB";
+        case PKCardTypeMasterCard:
+            return @"MasterCard";
+        case PKCardTypeUnknown:
+            return @"Unknown";
+        case PKCardTypeVisa:
+            return @"Visa";
+    }
+}
+
+- (instancetype)initWithString:(NSString *)string
+{
+    self = [super init];
+    if (self) {
+        // Strip non-digits
+        number = [string stringByReplacingOccurrencesOfString:@"\\D"
+                                                    withString:@""
+                                                       options:NSRegularExpressionSearch
+                                                         range:NSMakeRange(0, string.length)];
+    }
+    return self;
+}
+
+- (PKCardType)cardType
+{
+    return [PKCardNumber cardTypeFromCardNumber:number];
+}
+
+- (UIImage *)cardLogo
+{
+    return [PKCardNumber cardLogoForType:[self cardType]];
 }
 
 - (NSString *)last4

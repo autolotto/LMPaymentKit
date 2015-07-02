@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "PKCardType.h"
 
 @interface PKCardNumber : NSObject
@@ -19,8 +20,15 @@
 @property (nonatomic, readonly) NSString *formattedStringWithTrail;
 
 + (instancetype)cardNumberWithString:(NSString *)string;
++ (PKCardType)cardTypeFromString:(NSString *)typeString;
++ (UIImage *)cardLogoForType:(PKCardType)cardType;
++ (PKCardType)cardTypeFromCardNumber:(NSString *)cardNumber;
++ (NSString *)cardTypeStringFromCardNumber:(NSString *)cardNumber;
+
+
 - (instancetype)initWithString:(NSString *)string;
 - (PKCardType)cardType;
+- (UIImage *)cardLogo;
 - (NSString *)last4;
 - (NSString *)lastGroup;
 - (NSString *)string;
@@ -30,5 +38,7 @@
 - (BOOL)isValidLength;
 - (BOOL)isValidLuhn;
 - (BOOL)isPartiallyValid;
+
++ (NSString *)cardTypeStringFromCardNumber:(NSString *)cardNumber;
 
 @end

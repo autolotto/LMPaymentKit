@@ -19,18 +19,23 @@
 typedef enum {
     PKViewStateCardNumber,
 	PKViewStateExpiry,
-	PKViewStateCVC
+	PKViewStateCVC,
+    PKViewStateZip
 } PKViewState;
 
 typedef enum {
 	PKViewImageStyleNormal,
-    PKViewImageStyleOutline
+    PKViewImageStyleOutline,
+    PKViewImageStyleSmall,
 } PKViewImageStyle;
+
 
 @protocol PKViewDelegate <NSObject>
 @optional
 - (void)paymentView:(PKView *)paymentView withCard:(PKCard *)card isValid:(BOOL)valid;
 - (void)paymentView:(PKView *)paymentView didChangeState:(PKViewState)state;
+- (void)paymentViewDidTapCountryFlag:(PKView *)paymentView;
+- (BOOL)paymentViewShouldBegingEditing:(PKView *)paymentView;
 @end
 
 @interface PKView : UIView
@@ -42,12 +47,14 @@ typedef enum {
 @property(nonatomic) UIFont *font;
 @property(nonatomic) UIColor *textColor;
 @property(nonatomic, copy) NSDictionary *defaultTextAttributes;
+@property(nonatomic, copy) NSString *countryCode;
+@property(nonatomic) NSTextAlignment cardNumberAlignment;
 
 @property (nonatomic, readonly) UIView *opaqueOverGradientView;
-@property (nonatomic, readonly) PKCardNumber *cardNumber;
-@property (nonatomic, readonly) PKCardExpiry *cardExpiry;
-@property (nonatomic, readonly) PKCardCVC *cardCVC;
-@property (nonatomic, readonly) PKAddressZip *addressZip;
+@property (nonatomic, readwrite) PKCardNumber *cardNumber;
+@property (nonatomic, readwrite) PKCardExpiry *cardExpiry;
+@property (nonatomic, readwrite) PKCardCVC *cardCVC;
+@property (nonatomic, readwrite) PKAddressZip *addressZip;
 
 @property UIView *innerView;
 @property UIView *clipView;
@@ -55,6 +62,7 @@ typedef enum {
 @property UITextField *cardLastFourField;
 @property PKTextField *cardExpiryField;
 @property PKTextField *cardCVCField;
+@property PKTextField *cardZipField;
 @property UIImageView *placeholderView;
 @property (weak) id <PKViewDelegate> delegate;
 @property (retain) PKCard *card;

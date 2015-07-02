@@ -11,12 +11,16 @@
 @interface PKAddressZip : NSObject {
 @protected
     NSString *zip;
+    NSString *countryCode;
 }
 
 @property (nonatomic, readonly) NSString *string;
+@property (nonatomic, readonly) NSString *countryCode;
 
 + (instancetype)addressZipWithString:(NSString *)string;
++ (instancetype)addressZipWithString:(NSString *)string countryCode:(NSString *)countryCode;
 - (instancetype)initWithString:(NSString *)string;
+- (instancetype)initWithString:(NSString *)string countryCode:(NSString *)countryCode;
 - (NSString *)string;
 - (BOOL)isValid;
 - (BOOL)isPartiallyValid;
