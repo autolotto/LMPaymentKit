@@ -335,8 +335,12 @@
     cardZipSize.height = lastGroupSize.height;
     if ([_countryCode isEqualToString:@"US"]) {
         cardZipSize.width += [@"99999" sizeWithAttributes:attributes].width;
+        _cardZipField.placeholder = @"ZIP";
     } else if ([_countryCode isEqualToString:@"CA"]) {
-        cardZipSize.height += [@"A9A 9A9" sizeWithAttributes:attributes].width;
+        cardZipSize.width += [@"A9A 9A9" sizeWithAttributes:attributes].width;
+        _cardZipField.placeholder = @"ZIP";
+    } else {
+        _cardZipField.placeholder = @"";
     }
 	
 	CGSize expirySize = [_cardExpiryField.placeholder sizeWithAttributes:attributes];
