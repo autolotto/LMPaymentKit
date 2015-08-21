@@ -315,16 +315,16 @@
 	CGSize lastGroupSize, cvcSize, cardNumberSize, cardZipSize;
 	
 	if (self.cardNumber.cardType == PKCardTypeAmex) {
-		cardNumberSize = [@"1234 567890 12345" sizeWithAttributes:attributes];
+		cardNumberSize = [@"0000 000000 00000" sizeWithAttributes:attributes];
 		lastGroupSize = [@"00000" sizeWithAttributes:attributes];
 		cvcSize = [@"0000" sizeWithAttributes:attributes];
 	}
 	else {
 		if (self.cardNumber.cardType == PKCardTypeDinersClub) {
-			cardNumberSize = [@"1234 567890 1234" sizeWithAttributes:attributes];
+			cardNumberSize = [@"0000 000000 0000" sizeWithAttributes:attributes];
 		}
 		else {
-			cardNumberSize = [_cardNumberField.placeholder sizeWithAttributes:attributes];
+			cardNumberSize = [@"0000 0000 0000 0000" sizeWithAttributes:attributes];
 		}
 		
 		lastGroupSize = [@"0000" sizeWithAttributes:attributes];
