@@ -58,7 +58,9 @@
         return stripped.length == 0;
     
     if ([countryCode isEqualToString:@"US"]) {
-        return stripped.length == 5;
+        NSString *regEx = @"[0-9]{5}";
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regEx];
+        return [predicate evaluateWithObject:zip];
     }
     
     if ([countryCode isEqualToString:@"CA"]) {
@@ -76,7 +78,10 @@
         return zip.length == 0;
     
     if ([countryCode isEqualToString:@"US"]) {
-        return zip.length <= 5;
+        
+        NSString *regEx = @"[0-9]*";
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regEx];
+        return [predicate evaluateWithObject:zip] && zip.length <= 5;
     }
     
     if ([countryCode isEqualToString:@"CA"]) {
