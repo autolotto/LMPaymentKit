@@ -659,6 +659,9 @@
 
 - (void)pkTextFieldDidBackSpaceWhileTextIsEmpty:(PKTextField *)textField
 {
+    if (![self isBackspaceEnabled])
+        return;
+    
     if ([textField isEqual:_cardCVCField]) {
         [self.cardExpiryField becomeFirstResponder];
 	}

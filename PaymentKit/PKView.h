@@ -49,6 +49,7 @@ typedef enum {
 @property(nonatomic, copy) NSDictionary *defaultTextAttributes;
 @property(nonatomic, copy) NSString *countryCode;
 @property(nonatomic) NSTextAlignment cardNumberAlignment;
+@property(nonatomic, getter=isBackspaceEnabled) BOOL backspaceEnabled;
 
 @property (nonatomic, readonly) UIView *opaqueOverGradientView;
 @property (nonatomic, readwrite) PKCardNumber *cardNumber;
@@ -66,5 +67,6 @@ typedef enum {
 @property UIImageView *placeholderView;
 @property (weak) id <PKViewDelegate> delegate;
 @property (retain) PKCard *card;
+
 
 @end
