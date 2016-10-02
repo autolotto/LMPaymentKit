@@ -65,7 +65,7 @@
             break;
     }
     
-    return [UIImage imageNamed:cardTypeName];
+    return [UIImage imageNamed:cardTypeName inBundle:[NSBundle bundleForClass: PKCardNumber.class] compatibleWithTraitCollection: nil];
 }
 
 + (PKCardType)cardTypeFromCardNumber:(NSString *)cardNumber

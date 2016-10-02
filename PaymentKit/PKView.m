@@ -204,7 +204,7 @@
 
 - (void)setupPlaceholderView
 {
-    _placeholderView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"card_placeholder"]];
+    _placeholderView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"card_placeholder" inBundle:[NSBundle bundleForClass: PKView.class] compatibleWithTraitCollection: nil]];
 	_placeholderView.backgroundColor = [UIColor whiteColor];
 }
 
@@ -574,9 +574,9 @@
     PKCardType cardType      = [cardNumber cardType];
     
     if (cardType == PKCardTypeAmex) {
-        [self setPlaceholderViewImage:[UIImage imageNamed:@"cvc-amex"]];
+        [self setPlaceholderViewImage:[UIImage imageNamed:@"cvc-amex" inBundle:[NSBundle bundleForClass: PKView.class] compatibleWithTraitCollection: nil]];
     } else {
-        [self setPlaceholderViewImage:[UIImage imageNamed:@"cvc"]];
+        [self setPlaceholderViewImage:[UIImage imageNamed:@"cvc" inBundle:[NSBundle bundleForClass: PKView.class] compatibleWithTraitCollection: nil]];
     }
 }
 
@@ -613,7 +613,7 @@
 		cardTypeName = [NSString stringWithFormat:@"%@-outline", cardTypeName];
 	}
 	
-    [self setPlaceholderViewImage:[UIImage imageNamed:cardTypeName]];
+    [self setPlaceholderViewImage:[UIImage imageNamed:cardTypeName inBundle:[NSBundle bundleForClass: PKView.class] compatibleWithTraitCollection: nil]];
 }
 
 // Delegates
