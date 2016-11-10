@@ -36,7 +36,15 @@
 		case PKViewStateCVC:
 			self.helpLabel.text = @"Enter security code";
 			break;
+            
+        default:
+            break;
 	}
+}
+
+- (void)paymentView:(PKView *)paymentView didChangeCardNumber:(PKCardNumber *)cardNumber
+{
+    NSLog(@"entered card number: %@", cardNumber.string);
 }
 
 - (void)didReceiveMemoryWarning

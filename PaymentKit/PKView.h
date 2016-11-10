@@ -36,6 +36,7 @@ typedef enum {
 - (void)paymentView:(PKView *)paymentView didChangeState:(PKViewState)state;
 - (void)paymentViewDidTapCountryFlag:(PKView *)paymentView;
 - (BOOL)paymentViewShouldBegingEditing:(PKView *)paymentView;
+- (void)paymentView:(PKView *)paymentView didChangeCardNumber:(PKCardNumber *)cardNumber;
 @end
 
 @interface PKView : UIView

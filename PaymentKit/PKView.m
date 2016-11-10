@@ -636,7 +636,10 @@
 
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
-    return [self.delegate paymentViewShouldBegingEditing:self];
+    if ([self.delegate respondsToSelector:@selector(paymentViewShouldBegingEditing:)])
+        return [self.delegate paymentViewShouldBegingEditing:self];
+    
+    return YES;
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)replacementString
@@ -678,6 +681,8 @@
     NSString *resultString = [_cardNumberField.text stringByReplacingCharactersInRange:range withString:replacementString];
     resultString = [PKTextField textByRemovingUselessSpacesFromString:resultString];
     PKCardNumber *cardNumber = [PKCardNumber cardNumberWithString:resultString];
+    if ([self.delegate respondsToSelector:@selector(paymentView:didChangeCardNumber:)])
+        [self.delegate paymentView:self didChangeCardNumber:cardNumber];
     
     if (![cardNumber isPartiallyValid]) {
         return NO;
@@ -820,7 +825,8 @@
 
 - (void)onTapCountryFlag:(id)sender
 {
-    [self.delegate paymentViewDidTapCountryFlag:self];
+    if ([self.delegate respondsToSelector:@selector(paymentViewDidTapCountryFlag:)])
+        [self.delegate paymentViewDidTapCountryFlag:self];
 }
 
 #pragma mark -
