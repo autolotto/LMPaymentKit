@@ -80,28 +80,13 @@
 	}
 }
 
-- (void)setCountryCode:(NSString *)countryCode
-{
-    NSString *code = [countryCode uppercaseString];
-    
-    if ([_countryCode isEqualToString:code])
-        return;
-    
-    _countryCode = [countryCode uppercaseString];
-    _cardZipField.text = @"";
-    if (_cardZipField.leftView) {
-        [(UIButton *)_cardZipField.leftView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@.png", countryCode]] forState:UIControlStateNormal];
-    }
-    [self setNeedsLayout];
-}
-
 - (void)setDefaultTextAttributes:(NSDictionary *)defaultTextAttributes
 {
 	_defaultTextAttributes = [defaultTextAttributes copy];
 	
 	// We shouldn't need to set the font and textColor attributes, but a bug exists in 7.0 (fixed in 7.1/)
 	
-	NSArray *textFields = @[_cardNumberField, _cardExpiryField, _cardCVCField, _cardLastFourField, _cardZipField];
+	NSArray *textFields = @[_cardNumberField, _cardExpiryField, _cardCVCField, _cardLastFourField];
     for (PKTextField *textField in textFields) {
 		textField.defaultTextAttributes = _defaultTextAttributes;
 		textField.font = _defaultTextAttributes[NSFontAttributeName];
@@ -111,7 +96,6 @@
 	
 	_cardExpiryField.textAlignment = NSTextAlignmentCenter;
 	_cardCVCField.textAlignment = NSTextAlignmentCenter;
-    _cardZipField.textAlignment = NSTextAlignmentCenter;
 	
 	[self setNeedsLayout];
 }
@@ -175,7 +159,6 @@
     [self setupCardNumberField];
     [self setupCardExpiryField];
     [self setupCardCVCField];
-    [self setupCardZipField];
 	
 	self.defaultTextAttributes = @{
 								   NSFontAttributeName: [UIFont boldSystemFontOfSize:16.0],
@@ -223,25 +206,6 @@
 	_cardCVCField = [self textFieldWithPlaceholder:@"CVC"];
 }
 
-- (void)setupCardZipField
-{
-    
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, -6, 20, _innerView.frame.size.height)];
-    
-    [button addTarget:self action:@selector(onTapCountryFlag:) forControlEvents:UIControlEventTouchUpInside];
-    
-    _cardZipField = [self textFieldWithPlaceholder:@"ZIP"];
-    _cardZipField.leftView = button;
-    _cardZipField.leftViewMode = UITextFieldViewModeAlways;
-    
-    button.contentMode = UIViewContentModeScaleAspectFit;
-    button.imageView.contentMode = UIViewContentModeScaleAspectFit;
-    
-    if (_countryCode)
-        [button setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@.png", _countryCode]] forState:UIControlStateNormal];
-}
-
-
 // Accessors
 
 - (PKCardNumber *)cardNumber
@@ -277,17 +241,6 @@
 {
     if (cardCVC)
         _cardCVCField.text = [cardCVC string];
-}
-
-- (PKAddressZip *)addressZip
-{
-    return [PKAddressZip addressZipWithString:_cardZipField.text countryCode:_countryCode];
-}
-
-- (void)setAddressZip:(PKAddressZip *)addressZip
-{
-    if (addressZip)
-        _cardZipField.text = [addressZip string];
 }
 
 - (void)layoutSubviews
@@ -331,18 +284,6 @@
 		cvcSize = [_cardCVCField.placeholder sizeWithAttributes:attributes];
 	}
     
-    cardZipSize = _cardZipField.leftView.frame.size;
-    cardZipSize.height = lastGroupSize.height;
-    if ([_countryCode isEqualToString:@"US"]) {
-        cardZipSize.width += [@"99999" sizeWithAttributes:attributes].width;
-        _cardZipField.placeholder = @"ZIP";
-    } else if ([_countryCode isEqualToString:@"CA"]) {
-        cardZipSize.width += [@"A9A 9A9" sizeWithAttributes:attributes].width;
-        _cardZipField.placeholder = @"ZIP";
-    } else {
-        _cardZipField.placeholder = @"";
-    }
-	
 	CGSize expirySize = [_cardExpiryField.placeholder sizeWithAttributes:attributes];
 	
 	CGFloat textFieldY = (self.frame.size.height - lastGroupSize.height) / 2.0;
@@ -383,16 +324,11 @@
 										  newExpiryWidth,
 										  expirySize.height);
 
-	     _cardCVCField.frame = CGRectMake(CGRectGetMaxX(_cardExpiryField.frame),
+     _cardCVCField.frame = CGRectMake(CGRectGetMaxX(_cardExpiryField.frame),
 										  textFieldY,
 										  newCVCWidth,
 										  cvcSize.height);
     
-    _cardZipField.frame = CGRectMake(CGRectGetMaxX(_cardCVCField.frame),
-                                     textFieldY,
-                                     newZipWidth,
-                                     cardZipSize.height);
-	
 	CGFloat x;
 	
 	if (isInitialState) {
@@ -404,7 +340,7 @@
 	
 	        _innerView.frame = CGRectMake(x,
 										  0.0,
-										  CGRectGetMaxX(_cardZipField.frame),
+										  CGRectGetMaxX(_cardCVCField.frame),
 										  self.frame.size.height);
 }
 
@@ -439,7 +375,6 @@
                              [_cardExpiryField removeFromSuperview];
                              [_cardCVCField removeFromSuperview];
 							 [_cardLastFourField removeFromSuperview];
-                             [_cardZipField removeFromSuperview];
                          }];
     }
     
@@ -473,7 +408,6 @@
     
     [self.innerView addSubview:_cardExpiryField];
     [self.innerView addSubview:_cardCVCField];
-    [self.innerView addSubview:_cardZipField];
     [_cardExpiryField becomeFirstResponder];
 }
 
@@ -486,19 +420,10 @@
     [_cardCVCField becomeFirstResponder];
 }
 
-- (void)stateCardZip
-{
-    if ([self.delegate respondsToSelector:@selector(paymentView:didChangeState:)]) {
-        [self.delegate paymentView:self didChangeState:PKViewStateZip];
-    }
-    
-    [_cardZipField becomeFirstResponder];
-}
-
 - (BOOL)isValid
 {
     return [self.cardNumber isValid] && [self.cardExpiry isValid] &&
-	[self.cardCVC isValidWithType:self.cardNumber.cardType] && [self.addressZip isValid];
+	[self.cardCVC isValidWithType:self.cardNumber.cardType];
 }
 
 - (PKCard *)card
@@ -653,9 +578,6 @@
     else if ([textField isEqual:_cardCVCField]) {
         return [self cardCVCShouldChangeCharactersInRange:range replacementString:replacementString];
     }
-    else if ([textField isEqual:_cardZipField]) {
-        return [self cardZipShouldChangeCharactersInRange:range replacementString:replacementString];
-    }
     
     return NO;
 }
@@ -671,9 +593,6 @@
     else if ([textField isEqual:_cardExpiryField]) {
         [self stateCardNumber];
 	}
-    else if ([textField isEqual:_cardZipField]) {
-        [self stateCardCVC];
-    }
 }
 
 - (BOOL)cardNumberFieldShouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)replacementString
@@ -757,37 +676,12 @@
     
     if ([cardCVC isValidWithType:cardType]) {
         [self textFieldIsValid:_cardCVCField];
-        [self stateCardZip];
     } else {
         [self textFieldIsInvalid:_cardCVCField withErrors:NO];
     }
     
     return NO;
 }
-
-- (BOOL)cardZipShouldChangeCharactersInRange: (NSRange)range replacementString:(NSString *)replacementString
-{
-    NSString *resultString = [_cardZipField.text stringByReplacingCharactersInRange:range withString:replacementString];
-    resultString = [PKTextField textByRemovingUselessSpacesFromString:resultString];
-    PKAddressZip *zip = [PKAddressZip addressZipWithString:resultString countryCode:_countryCode];
-    
-    // Restrict length
-    if (![zip isPartiallyValid]) {
-        return NO;
-    }
-    
-    // Strip non-digits
-    _cardZipField.text = [zip string];
-    
-    if ([zip isValid]) {
-        [self textFieldIsValid:_cardZipField];
-    } else {
-        [self textFieldIsInvalid:_cardZipField withErrors:NO];
-    }
-    
-    return NO;
-}
-
 
 // Validations
 
@@ -833,7 +727,7 @@
 #pragma mark UIResponder
 - (UIResponder *)firstResponderField;
 {
-    NSArray *responders = @[self.cardNumberField, self.cardExpiryField, self.cardCVCField, self.cardZipField];
+    NSArray *responders = @[self.cardNumberField, self.cardExpiryField, self.cardCVCField];
     for (UIResponder *responder in responders) {
         if (responder.isFirstResponder) {
             return responder;
@@ -854,8 +748,6 @@
     else if (![[PKCardCVC cardCVCWithString:self.cardCVCField.text] isValid]) {
         return self.cardCVCField;
 	}
-    else if (![[PKAddressZip addressZipWithString:self.cardZipField.text countryCode:_countryCode] isValid])
-        return self.cardZipField;
     
     return nil;
 }
@@ -866,7 +758,7 @@
         return self.firstInvalidField;
 	}
     
-    return self.cardZipField;
+    return self.cardCVCField;
 }
 
 - (BOOL)isFirstResponder;

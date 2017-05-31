@@ -11,8 +11,6 @@
 #import "PKCardNumber.h"
 #import "PKCardExpiry.h"
 #import "PKCardCVC.h"
-#import "PKAddressZip.h"
-#import "PKUSAddressZip.h"
 
 @class PKView, PKTextField;
 
@@ -56,7 +54,6 @@ typedef enum {
 @property (nonatomic, readwrite) PKCardNumber *cardNumber;
 @property (nonatomic, readwrite) PKCardExpiry *cardExpiry;
 @property (nonatomic, readwrite) PKCardCVC *cardCVC;
-@property (nonatomic, readwrite) PKAddressZip *addressZip;
 
 @property UIView *innerView;
 @property UIView *clipView;
@@ -64,7 +61,6 @@ typedef enum {
 @property UITextField *cardLastFourField;
 @property PKTextField *cardExpiryField;
 @property PKTextField *cardCVCField;
-@property PKTextField *cardZipField;
 @property UIImageView *placeholderView;
 @property (weak) id <PKViewDelegate> delegate;
 @property (retain) PKCard *card;
